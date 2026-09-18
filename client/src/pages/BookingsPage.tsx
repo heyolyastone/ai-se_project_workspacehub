@@ -50,6 +50,7 @@ export const BookingsPage = () => {
   >({});
 
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const [createError, setCreateError] = useState<string | null>(null);
 
@@ -67,7 +68,7 @@ export const BookingsPage = () => {
       }
 
       setLoading(true);
-      setCreateError(null);
+      setLoadError(null);
 
       try {
         const nextBookings = await bookingService.list();
@@ -82,11 +83,9 @@ export const BookingsPage = () => {
             ]),
           ),
         );
-      } catch (loadError) {
-        setCreateError(
-          loadError instanceof Error
-            ? loadError.message
-            : "Unable to load bookings",
+      } catch (error) {
+        setLoadError(
+          error instanceof Error ? error.message : "Unable to load bookings",
         );
       } finally {
         setLoading(false);
@@ -99,14 +98,14 @@ export const BookingsPage = () => {
   const handleCreate = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    setCreateError(null);
+
     const validationErrors = validateBookingFormState(createState);
 
     if (Object.keys(validationErrors).length > 0) {
       setCreateTouched(allFieldsTouched);
       return;
     }
-
-    setCreateError(null);
 
     try {
       const booking = await bookingService.create(createState);
@@ -171,6 +170,11 @@ export const BookingsPage = () => {
       return;
     }
 
+    setBookingErrors((current) => ({
+      ...current,
+      [bookingId]: "",
+    }));
+
     const validationErrors = validateBookingFormState(formState);
 
     if (Object.keys(validationErrors).length > 0) {
@@ -180,11 +184,6 @@ export const BookingsPage = () => {
       }));
       return;
     }
-
-    setBookingErrors((current) => ({
-      ...current,
-      [bookingId]: "",
-    }));
 
     try {
       const updatedBooking = await bookingService.update(bookingId, formState);
@@ -254,6 +253,10 @@ export const BookingsPage = () => {
         message="Fetching schedule items."
       />
     );
+  }
+
+  if (loadError) {
+    return <StatusPanel title="Bookings unavailable" message={loadError} />;
   }
 
   return (
