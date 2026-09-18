@@ -1,9 +1,5 @@
 import { buildProjectWithTaskCount } from "../utils/projectMetrics";
-import type {
-  Project,
-  ProjectWithTaskCount,
-  Task,
-} from "./models";
+import type { Project, ProjectWithTaskCount, Task } from "./models";
 
 export const exampleProject: Project = {
   _id: "project-001",

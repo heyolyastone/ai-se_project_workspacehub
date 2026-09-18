@@ -1,8 +1,4 @@
-import type {
-  Project,
-  ProjectWithTaskCount,
-  Task,
-} from "../types/models";
+import type { Project, ProjectWithTaskCount, Task } from "../types/models";
 
 export function buildProjectWithTaskCount(
   project: Project,
