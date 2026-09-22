@@ -6,6 +6,7 @@ import { Organization } from "../models/Organization";
 import { Project } from "../models/Project";
 import { Task } from "../models/Task";
 import { User } from "../models/User";
+import { deleteTask } from "../services/taskService";
 
 const seed = async () => {
   await connectToDatabase();
@@ -170,6 +171,33 @@ const seed = async () => {
   });
 
   await User.deleteOne({ _id: temporaryUser._id });
+
+  const ghostTask = await Task.create({
+    organizationId: organization._id,
+    projectId: projectOne._id,
+    title: "Temporary task with orphaned comment",
+    description: "Used to verify task comment cleanup.",
+    status: "todo",
+    priority: "low",
+    assignedTo: owner._id,
+    dueDate: null,
+  });
+
+  await Comment.create({
+    organizationId: organization._id,
+    taskId: ghostTask._id,
+    authorId: owner._id,
+    content: "This comment should be removed when its task is deleted.",
+  });
+
+  await deleteTask(
+    {
+      userId: String(owner._id),
+      organizationId: String(organization._id),
+      role: "owner",
+    },
+    String(ghostTask._id),
+  );
 
   await Booking.create([
     {

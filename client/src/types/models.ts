@@ -75,6 +75,20 @@ export type TaskCreatePayload = Pick<
 
 export type TaskUpdatePayload = Partial<TaskCreatePayload>;
 
+export interface TaskWithCommentCount extends Task {
+  commentCount: number;
+}
+
+export interface Comment {
+  _id: string;
+  organizationId: string;
+  taskId: string;
+  authorId: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Booking {
   _id: string;
   organizationId: string;

@@ -77,9 +77,7 @@ export const updateComment = async (
     );
   }
 
-  if (payload.content !== undefined) {
-    comment.content = requireStringLength(payload.content, "Content", 1);
-  }
+  comment.content = requireStringLength(payload.content, "Content", 1);
 
   await comment.save();
   return comment;
