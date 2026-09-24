@@ -21,5 +21,7 @@ export const errorHandler = (
     return sendError(res, "Resource not found", 404);
   }
 
+  console.error("Unhandled server error:", error);
+
   return sendError(res, "Internal server error", 500);
 };
